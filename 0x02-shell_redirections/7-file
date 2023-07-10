@@ -1,0 +1,8 @@
+#!/bin/bash
+
+filename="*\''Best School'\''*\$?******:)"
+content="Best School"
+
+# Create the file with the specified name and content
+echo -e "$content\n" > "$filename"
+
