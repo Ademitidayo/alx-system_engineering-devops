@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#display name with ls after dash
+
+for file in *; do
+	if [ ! -h "$file" ] && [ -f "$file" ]; then
+		name=$(echo "$file" | cut -d '-' -f 2-)
+		echo "$name"
+	fi
+done
