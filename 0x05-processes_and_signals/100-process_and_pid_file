@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Define the function to handle signals
 # Trap signals and call the signal_handler function
 # Get the PID of the current process and store it in the file /var/run/myscript.pid
