@@ -1,0 +1,32 @@
+#!/bin/bash
+# Define the function to handle signals
+# Trap signals and call the signal_handler function
+# Get the PID of the current process and store it in the file /var/run/myscript.pid
+# Display "To infinity and beyond" indefinitely
+signal_handler() {
+	case $1 in
+		SIGTERM)
+			echo "I hate the kill command"
+			;;
+		SIGINT)
+			echo "Y U no love me?!"
+			;;
+		SIGQUIT)
+			echo "Y U no love me?!"
+			rm -f /var/run/myscript.pid
+			exit
+			;;
+	esac
+}
+
+trap 'signal_handler SIGTERM' SIGTERM
+trap 'signal_handler SIGINT' SIGINT
+trap 'signal_handler SIGQUIT' SIGQUIT
+
+echo $$ > /var/run/myscript.pid
+
+while true;
+do
+	echo "To infinity and beyond"
+	sleep 1
+done
