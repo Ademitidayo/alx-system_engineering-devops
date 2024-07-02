@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Use ssh to connect toserver key ~/.ssh/school with ubuntu
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/school -N "betty"
