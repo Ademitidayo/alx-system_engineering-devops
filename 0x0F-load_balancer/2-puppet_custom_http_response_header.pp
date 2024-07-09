@@ -7,13 +7,11 @@ exec { 'check update':
   unless  => '/usr/bin/apt-get update -qq',
 }
 
-# Ensure the nginx package is installed
 package { 'nginx':
   ensure  => installed,
   require => Exec['check update'],
 }
 
-# Create and manage the nginx site configuration file
 file { '/etc/nginx/sites-available/default':
   ensure  => file,
   content => @(END),
@@ -45,26 +43,22 @@ END
   notify  => Service['nginx'],
 }
 
-# Ensure the nginx site configuration is linked to sites-enabled
 file { '/etc/nginx/sites-enabled/default':
   ensure  => link,
   target  => '/etc/nginx/sites-available/default',
   notify  => Service['nginx'],
 }
 
-# Allow nginx through the firewall
 exec { 'allow-nginx-http':
   command => 'ufw allow "Nginx HTTP"',
   unless  => 'ufw status | grep -q "Nginx HTTP"',
 }
 
-# Create index.html file
 file { '/var/www/html/index.html':
   ensure  => file,
   content => 'Hello World!',
 }
 
-# Ensure the nginx service is running and enabled
 service { 'nginx':
   ensure     => running,
   enable     => true,
