@@ -1,65 +1,26 @@
 #!/usr/bin/env bash
-# Script to update Nginx configuration with corrections and restart Nginx
+# This script configures Nginx to listen on port 80, fixes configuration issues, and starts the Nginx service
 
-# Define Nginx configuration file path
-NGINX_CONF="/etc/nginx/sites-available/default"
+# Update package list and install Nginx
+apt update
+apt install -y nginx
 
-# Corrected Nginx configuration content
-NGINX_CONFIG="
-server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
+# Fix add_header directive
+sed -i 's/add_header X-Served-By .*/add_header X-Served-By "myserver";/g' /etc/nginx/sites-available/default
 
-    root /var/www/html;
-    index index.html index.htm index.nginx-debian.html;
-
-    server_name _;
-
-    add_header X-Content-Type-Options nosniff;
-
-    location / {
-        try_files \$uri \$uri/ =404;
-    }
-
-    if (\$request_uri ~* /redirect_me) {
-        rewrite ^/redirect_me https://th3-gr00t.tk/ permanent;
-    }
-
-    error_page 404 /error_404.html;
-    location = /error_404.html {
-        internal;
-    }
-}
-"
-
-# Function to update Nginx configuration file
-update_nginx_config() {
-    echo "$NGINX_CONFIG" | sudo tee "$NGINX_CONF" > /dev/null
-}
-
-# Function to test Nginx configuration
-test_nginx_config() {
-    sudo nginx -t
-}
-
-# Function to restart Nginx service
-restart_nginx() {
-    sudo service nginx restart
-}
-
-# Main script execution starts here
-echo "Updating Nginx configuration..."
-update_nginx_config
-
-echo "Testing Nginx configuration..."
-test_nginx_config
-
-# Check if configuration test passed
-if [ $? -eq 0 ]; then
-    echo "Nginx configuration test passed. Restarting Nginx..."
-    restart_nginx
-    echo "Nginx restarted successfully."
+# Test Nginx configuration
+if nginx -t; then
+    # If configuration test passes, start Nginx service
+    service nginx start
 else
-    echo "Nginx configuration test failed. Please check the configuration."
+    echo "Nginx configuration test failed"
+    exit 1
+fi
+
+# Verify Nginx is running
+if pgrep -x "nginx" > /dev/null; then
+    echo "Nginx is running"
+else
+    echo "Nginx failed to start"
     exit 1
 fi
