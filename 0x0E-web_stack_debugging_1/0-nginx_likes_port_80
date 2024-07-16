@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# Script to update Nginx configuration with corrections and restart Nginx
+
+# Define Nginx configuration file path
+NGINX_CONF="/etc/nginx/sites-available/default"
+
+# Corrected Nginx configuration content
+NGINX_CONFIG="
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    root /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
+
+    server_name _;
+
+    add_header X-Content-Type-Options nosniff;
+
+    location / {
+        try_files \$uri \$uri/ =404;
+    }
+
+    if (\$request_uri ~* /redirect_me) {
+        rewrite ^/redirect_me https://th3-gr00t.tk/ permanent;
+    }
+
+    error_page 404 /error_404.html;
+    location = /error_404.html {
+        internal;
+    }
+}
+"
+
+# Function to update Nginx configuration file
+update_nginx_config() {
+    echo "$NGINX_CONFIG" | sudo tee "$NGINX_CONF" > /dev/null
+}
+
+# Function to test Nginx configuration
+test_nginx_config() {
+    sudo nginx -t
+}
+
+# Function to restart Nginx service
+restart_nginx() {
+    sudo service nginx restart
+}
+
+# Main script execution starts here
+echo "Updating Nginx configuration..."
+update_nginx_config
+
+echo "Testing Nginx configuration..."
+test_nginx_config
+
+# Check if configuration test passed
+if [ $? -eq 0 ]; then
+    echo "Nginx configuration test passed. Restarting Nginx..."
+    restart_nginx
+    echo "Nginx restarted successfully."
+else
+    echo "Nginx configuration test failed. Please check the configuration."
+    exit 1
+fi
