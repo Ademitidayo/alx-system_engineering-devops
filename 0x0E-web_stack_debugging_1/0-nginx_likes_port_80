@@ -1,26 +1,5 @@
 #!/usr/bin/env bash
-# This script configures Nginx to listen on port 80, fixes configuration issues, and starts the Nginx service
+# configures a server to listening on port 80 of all servers active IPv4 IPs
 
-# Update package list and install Nginx
-apt update
-apt install -y nginx
-
-# Fix add_header directive
-sed -i 's/add_header X-Served-By .*/add_header X-Served-By "myserver";/g' /etc/nginx/sites-available/default
-
-# Test Nginx configuration
-if nginx -t; then
-    # If configuration test passes, start Nginx service
-    service nginx start
-else
-    echo "Nginx configuration test failed"
-    exit 1
-fi
-
-# Verify Nginx is running
-if pgrep -x "nginx" > /dev/null; then
-    echo "Nginx is running"
-else
-    echo "Nginx failed to start"
-    exit 1
-fi
+sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+sudo service nginx restart
