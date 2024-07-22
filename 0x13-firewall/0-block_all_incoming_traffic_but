@@ -1,0 +1,21 @@
+# Commands to configure ufw
+echo -e "Updating\n"
+
+# Install ufw (if necessary)
+sudo apt update
+echo -e "Installing UFW\n"
+sudo apt install ufw
+
+# Enable ufw
+sudo ufw enable
+
+# Set default policies
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+
+# Allow specific incoming traffic
+sudo ufw allow 22/tcp
+sudo ufw allow 443/tcp
+sudo ufw allow 80/tcp
+echo -e "Check status and rules.\n"
+sudo ufw status verbose
