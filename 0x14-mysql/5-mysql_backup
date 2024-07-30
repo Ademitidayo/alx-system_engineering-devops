@@ -1,20 +1,11 @@
 #!/usr/bin/env bash
 # backup and compress my databases
-if [ "$#" -ne 1 ]; then
-  echo "Usage: $0 <password>"
-  exit 1
-fi
 
-PASSWORD=$1
-TIMESTAMP=$(date +%d-%m-%Y)
-BACKUP_FILE="backup.sql"
-ARCHIVE_FILE="${TIMESTAMP}.tar.gz"
+# variables
+day=$(date +"%d")
+month=$(date +"%m")
+year=$(date +"%Y")
+file_name="$day-$month-$year.tar.gz"
 
-# Dump all MySQL databases
-mysqldump -u root -p"$PASSWORD" --all-databases > $BACKUP_FILE
-
-# Compress the dump file
-tar -czvf $ARCHIVE_FILE $BACKUP_FILE
-
-# Clean up
-rm $BACKUP_FILE
+mysqldump --all-databases -u root --password="$1" > backup.sql
+tar -czvf "$file_name" backup.sql
